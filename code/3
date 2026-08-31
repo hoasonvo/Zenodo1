@@ -1,0 +1,124 @@
+# ==========================================================
+# CREATE MANIFEST + SHA-256 CHECKSUMS
+# ==========================================================
+
+import os
+import hashlib
+import pandas as pd
+
+package_dir = "/content/EDLC_ML_Inverse_Design_v1.0"
+
+manifest_path = os.path.join(
+    package_dir,
+    "06_MANIFEST_SHA256.csv"
+)
+
+
+# ----------------------------------------------------------
+# SHA-256 function
+# ----------------------------------------------------------
+
+def sha256_file(filepath, chunk_size=1024 * 1024):
+
+    sha256 = hashlib.sha256()
+
+    with open(filepath, "rb") as f:
+
+        while True:
+
+            chunk = f.read(chunk_size)
+
+            if not chunk:
+                break
+
+            sha256.update(chunk)
+
+    return sha256.hexdigest()
+
+
+# ----------------------------------------------------------
+# Create manifest
+# ----------------------------------------------------------
+
+records = []
+
+for filename in sorted(
+    os.listdir(package_dir)
+):
+
+    filepath = os.path.join(
+        package_dir,
+        filename
+    )
+
+    if os.path.isfile(filepath):
+
+        size_bytes = os.path.getsize(
+            filepath
+        )
+
+        checksum = sha256_file(
+            filepath
+        )
+
+        records.append({
+
+            "Filename":
+                filename,
+
+            "Size_Bytes":
+                size_bytes,
+
+            "Size_KB":
+                round(
+                    size_bytes / 1024,
+                    2
+                ),
+
+            "SHA256":
+                checksum
+
+        })
+
+
+manifest = pd.DataFrame(records)
+
+
+# ----------------------------------------------------------
+# Save manifest
+# ----------------------------------------------------------
+
+manifest.to_csv(
+    manifest_path,
+    index=False,
+    encoding="utf-8"
+)
+
+
+# ----------------------------------------------------------
+# Display
+# ----------------------------------------------------------
+
+print("=" * 110)
+print("REPRODUCIBILITY PACKAGE MANIFEST")
+print("=" * 110)
+
+print(
+    manifest.to_string(
+        index=False
+    )
+)
+
+
+print("\n")
+print("=" * 110)
+print("MANIFEST SAVED")
+print("=" * 110)
+
+print(
+    manifest_path
+)
+
+print(
+    "\n✅ SHA-256 checksums generated for all package files."
+)
