@@ -1,0 +1,106 @@
+# ==========================================================
+# CREATE RESEARCH REPRODUCIBILITY PACKAGE
+# EDLC ML + INVERSE DESIGN
+# ==========================================================
+
+import os
+import shutil
+
+# ----------------------------------------------------------
+# 1. CREATE PACKAGE DIRECTORY
+# ----------------------------------------------------------
+
+package_dir = "/content/EDLC_ML_Inverse_Design_v1.0"
+
+os.makedirs(
+    package_dir,
+    exist_ok=True
+)
+
+
+# ----------------------------------------------------------
+# 2. SOURCE FILES
+# ----------------------------------------------------------
+
+files_to_copy = {
+
+    "01_AI_Ready_Dataset_556x78.xlsx":
+        "/content/ELDC_AI_Dataset_v1(4).xlsx",
+
+    "02_FINAL_XGBOOST_SUPERCAPACITOR.pkl":
+        "/content/FINAL_XGBOOST_SUPERCAPACITOR.pkl",
+
+    "03_FINAL_XGBOOST_FEATURES.json":
+        "/content/FINAL_XGBOOST_FEATURES.json",
+
+    "04_INVERSE_DESIGN_FINAL_VALIDATION.xlsx":
+        "/content/INVERSE_DESIGN_CANDIDATE_VALIDATION.xlsx"
+
+}
+
+
+# ----------------------------------------------------------
+# 3. COPY FILES
+# ----------------------------------------------------------
+
+print("=" * 100)
+print("CREATING REPRODUCIBILITY PACKAGE")
+print("=" * 100)
+
+for new_name, source_path in files_to_copy.items():
+
+    destination = os.path.join(
+        package_dir,
+        new_name
+    )
+
+    if os.path.exists(source_path):
+
+        shutil.copy2(
+            source_path,
+            destination
+        )
+
+        print(
+            f"✅ {new_name}"
+        )
+
+    else:
+
+        print(
+            f"❌ NOT FOUND: {source_path}"
+        )
+
+
+# ----------------------------------------------------------
+# 4. LIST PACKAGE CONTENT
+# ----------------------------------------------------------
+
+print("\n")
+print("=" * 100)
+print("PACKAGE CONTENT")
+print("=" * 100)
+
+for filename in sorted(
+    os.listdir(package_dir)
+):
+
+    filepath = os.path.join(
+        package_dir,
+        filename
+    )
+
+    size_kb = (
+        os.path.getsize(filepath)
+        / 1024
+    )
+
+    print(
+        f"{filename:50s}"
+        f"{size_kb:10.2f} KB"
+    )
+
+
+print("\n")
+print("Package directory:")
+print(package_dir)
